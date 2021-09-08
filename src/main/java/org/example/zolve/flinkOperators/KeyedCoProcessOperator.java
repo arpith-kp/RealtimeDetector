@@ -44,10 +44,8 @@ public class KeyedCoProcessOperator extends KeyedCoProcessFunction<String, Strin
 	public void processElement2(String externalRecord, Context ctx, Collector<String> collector) throws Exception {
 
 		this.externalTracker.put(ctx.getCurrentKey(), externalRecord);
-		Calendar calendar = Calendar.getInstance();
-		ctx.timerService().registerProcessingTimeTimer(calendar.getTimeInMillis() / 1000L + 60);
-//		ctx.timerService().registerProcessingTimeTimer(ctx.timerService().currentProcessingTime() + 1);
-
+		long times = ctx.timerService().currentProcessingTime();
+		ctx.timerService().registerEventTimeTimer(times+ 60000L);
 	}
 
 	@Override

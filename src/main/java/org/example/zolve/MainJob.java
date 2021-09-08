@@ -4,6 +4,7 @@ import org.apache.flink.api.common.restartstrategy.RestartStrategies;
 import org.apache.flink.api.common.time.Time;
 import org.apache.flink.api.java.io.TextInputFormat;
 import org.apache.flink.api.java.utils.ParameterTool;
+import org.apache.flink.contrib.streaming.state.EmbeddedRocksDBStateBackend;
 import org.apache.flink.streaming.api.CheckpointingMode;
 import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.datastream.DataStream;
@@ -33,7 +34,9 @@ public class MainJob {
 				Time.of(10, TimeUnit.SECONDS) // delay
 		));
 		env.getCheckpointConfig().enableExternalizedCheckpoints(CheckpointConfig.ExternalizedCheckpointCleanup.RETAIN_ON_CANCELLATION);
-		env.setStreamTimeCharacteristic(TimeCharacteristic.ProcessingTime);
+		env.setStreamTimeCharacteristic(TimeCharacteristic.IngestionTime);
+		env.setStateBackend(new EmbeddedRocksDBStateBackend());
+		env.getCheckpointConfig().setCheckpointStorage("file:///Users/z003fwy/workspace/delete/Zolve/checkpointdir");
 
 		ParameterTool readArgs = ParameterTool.fromArgs(args);
 		String propFilePath = readArgs.get("input");
